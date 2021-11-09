@@ -1,0 +1,168 @@
+ak@ak:~$ hdfs dfs -put /home/ak/datasets/employee.csv /daamini
+ak@ak:~$ hdfs dfs -mkdir -p /a/b/c
+ak@ak:~$ hdfs dfs -copyFromLocal /home/ak/datasets/emp.csv
+ak@ak:~$ hdfs dfs -copyFromLocal /home/ak/datasets/emp.csv /a/b/c
+ak@ak:~$ hdfs dfs -setrep 1 /a/b/c/emp.csv
+Replication 1 set: /a/b/c/emp.csv
+ak@ak:~$ hdfs dfs -rm /a/b/c/emp.csv
+Deleted /a/b/c/emp.csv
+ak@ak:~$ hdfs dfs -put /home/ak/hadoop.zip /a/b/c
+put: `/home/ak/hadoop.zip': No such file or directory
+ak@ak:~$ hdfs dfs -put /home/ak/hadoop-2.10.1.zip /a/b/c
+ak@ak:~$ hdfs dfs -appendToFile /home/ak/hadoop-2.10.1.zip /a/b/c/hadoop-2.10.1.zip
+ak@ak:~$ hdfs dfs -put /home/ak/datasets/emp.csv /a/b/c
+ak@ak:~$ hive
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/ak/apache-hive-3.1.2-bin/lib/log4j-slf4j-impl-2.10.0.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/ak/hadoop-2.10.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Hive Session ID = b11b5c08-513c-4b80-8732-d26cedc8e5d5
+
+Logging initialized using configuration in jar:file:/home/ak/apache-hive-3.1.2-bin/lib/hive-common-3.1.2.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Hive Session ID = 6127874c-6da0-4630-bcc8-c7ac21314d1d
+hive> create table employee(empno INT,ename STRING,sal INT) row format delimitedfields terminated by ',' stored as textfile;
+NoViableAltException(24@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.tableRowFormat(HiveParser.java:27964)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.createTableStatement(HiveParser.java:6765)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:4295)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:2494)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1420)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:220)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:74)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:67)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:616)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1826)
+	at org.apache.hadoop.hive.ql.Driver.compileAndRespond(Driver.java:1773)
+	at org.apache.hadoop.hive.ql.Driver.compileAndRespond(Driver.java:1768)
+	at org.apache.hadoop.hive.ql.reexec.ReExecDriver.compileAndRespond(ReExecDriver.java:126)
+	at org.apache.hadoop.hive.ql.reexec.ReExecDriver.run(ReExecDriver.java:214)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:239)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:188)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:402)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:683)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:244)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:158)
+FAILED: ParseException line 1:65 cannot recognize input near 'row' 'format' 'delimitedfields' in table row format specification
+hive> create table employee(empno INT,ename STRING,sal INT);
+OK
+Time taken: 1.378 seconds
+hive> load data local inpath '/home/ak/datasets/emp.csv' into table employee;
+Loading data to table default.employee
+OK
+Time taken: 1.235 seconds
+hive> desc extended employee;
+OK
+empno               	int                 	                    
+ename               	string              	                    
+sal                 	int                 	                    
+	 	 
+Detailed Table Information	Table(tableName:employee, dbName:default, owner:ak, createTime:1636438412, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:empno, type:int, comment:null), FieldSchema(name:ename, type:string, comment:null), FieldSchema(name:sal, type:int, comment:null)], location:hdfs://localhost:9000/user/hive/warehouse/employee, inputFormat:org.apache.hadoop.mapred.TextInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, parameters:{serialization.format=1}), bucketCols:[], sortCols:[], parameters:{}, skewedInfo:SkewedInfo(skewedColNames:[], skewedColValues:[], skewedColValueLocationMaps:{}), storedAsSubDirectories:false), partitionKeys:[], parameters:{totalSize=39, numRows=0, rawDataSize=0, numFiles=1, transient_lastDdlTime=1636438471, bucketing_version=2}, viewOriginalText:null, viewExpandedText:null, tableType:MANAGED_TABLE, rewriteEnabled:false, catName:hive, ownerType:USER)	
+Time taken: 0.353 seconds, Fetched: 5 row(s)
+hive> select * from employee;
+OK
+NULL	NULL	NULL
+NULL	NULL	NULL
+NULL	NULL	NULL
+Time taken: 3.1 seconds, Fetched: 3 row(s)
+hive> insert into employee values(121,'aaa',1111);
+Query ID = ak_20211109114541_82e7cb94-e08b-4288-809e-ec8611a466dc
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636434825895_0001, Tracking URL = http://ak:8088/proxy/application_1636434825895_0001/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636434825895_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-09 11:45:59,612 Stage-1 map = 0%,  reduce = 0%
+2021-11-09 11:46:09,312 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.28 sec
+2021-11-09 11:46:16,710 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 6.57 sec
+MapReduce Total cumulative CPU time: 6 seconds 570 msec
+Ended Job = job_1636434825895_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost:9000/user/hive/warehouse/employee/.hive-staging_hive_2021-11-09_11-45-41_690_5893426514357561747-1/-ext-10000
+Loading data to table default.employee
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 6.57 sec   HDFS Read: 16185 HDFS Write: 288 SUCCESS
+Total MapReduce CPU Time Spent: 6 seconds 570 msec
+OK
+Time taken: 37.186 seconds
+hive> select * from employee;
+OK
+121	aaa	1111
+NULL	NULL	NULL
+NULL	NULL	NULL
+NULL	NULL	NULL
+Time taken: 0.257 seconds, Fetched: 4 row(s)
+hive> select count(*) from employee;
+Query ID = ak_20211109114724_02b741bf-56a6-416c-9b07-d81c2f951ed0
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636434825895_0002, Tracking URL = http://ak:8088/proxy/application_1636434825895_0002/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636434825895_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-09 11:47:34,898 Stage-1 map = 0%,  reduce = 0%
+2021-11-09 11:47:42,410 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.23 sec
+2021-11-09 11:47:50,915 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 6.69 sec
+MapReduce Total cumulative CPU time: 6 seconds 690 msec
+Ended Job = job_1636434825895_0002
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 6.69 sec   HDFS Read: 12315 HDFS Write: 101 SUCCESS
+Total MapReduce CPU Time Spent: 6 seconds 690 msec
+OK
+4
+Time taken: 28.116 seconds, Fetched: 1 row(s)
+hive> select * from employee where empno =121;
+OK
+121	aaa	1111
+Time taken: 0.38 seconds, Fetched: 1 row(s)
+hive> select sum(salary) from employee;
+FAILED: SemanticException [Error 10004]: Line 1:11 Invalid table alias or column reference 'salary': (possible column names are: empno, ename, sal)
+hive> select sum(sal) from employee;
+Query ID = ak_20211109114857_797054d8-e5ef-4656-9c33-5255c1bb8c0b
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1636434825895_0003, Tracking URL = http://ak:8088/proxy/application_1636434825895_0003/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1636434825895_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-09 11:49:07,283 Stage-1 map = 0%,  reduce = 0%
+2021-11-09 11:49:14,761 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.45 sec
+2021-11-09 11:49:23,127 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 5.39 sec
+MapReduce Total cumulative CPU time: 5 seconds 390 msec
+Ended Job = job_1636434825895_0003
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 5.39 sec   HDFS Read: 12538 HDFS Write: 104 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 390 msec
+OK
+1111
+Time taken: 27.981 seconds, Fetched: 1 row(s)
+hive> 
+
